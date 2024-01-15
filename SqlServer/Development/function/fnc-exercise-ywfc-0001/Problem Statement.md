@@ -47,10 +47,7 @@ El plantamiento del problema es el siguiente:
 </table>
 
 - La información brindada en la tabla se ha extradido de un maestro que contiene información de una publicación de "X"en la red. Lo que se requieres es convertir ese formato a una fecha visible.
- <pre>
-    <code class="hljs language-xml shcb-code-table shcb-line-numbers shcb-wrap-lines">
+ <pre><code class="hljs language-xml shcb-code-table shcb-line-numbers shcb-wrap-lines">
     SELECT  DateOfPostText, count(1) count_row, len(DateOfPostText) lengthString,len(DateOfPostText) - len(REPLACE(DateOfPostText,' ','')) AS count_Space  
     FROM  [dbo].[Post]
-    group by  DateOfPostText
-    </code>
- </pre>
+    group by  DateOfPostText </code></pre>
