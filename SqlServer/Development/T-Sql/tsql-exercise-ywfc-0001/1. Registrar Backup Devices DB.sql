@@ -8,10 +8,10 @@ SET  @iurldisk = '\\POCCLUSTER1\Devicesbackup';
 SET @sqlcmdexecute ='';
 IF (right(@iurldisk, 1)<>'\') SET @iurldisk = @iurldisk +'\';
  
-SELECT  @sqlcmdexecute = @sqlcmdexecute + 'IF NOT EXISTS (SELECT * FROM master.sys.backup_devices where name = N''citizen_bkp_' + name + ''')
+SELECT  @sqlcmdexecute = @sqlcmdexecute + 'IF NOT EXISTS (SELECT * FROM master.sys.backup_devices where name = N''demo_bkp_' + name + ''')
 BEGIN
 	
-	EXEC master.dbo.sp_addumpdevice  @devtype = N''disk'', @logicalname = N''citizen_bkp_' + name + ''', @physicalname = N''' + @iurldisk + 'citizen_bkp_db_' + name + '.bak''
+	EXEC master.dbo.sp_addumpdevice  @devtype = N''disk'', @logicalname = N''demo_bkp_' + name + ''', @physicalname = N''' + @iurldisk + 'demo_bkp_db_' + name + '.bak''
 END
 '
 FROM sys.databases

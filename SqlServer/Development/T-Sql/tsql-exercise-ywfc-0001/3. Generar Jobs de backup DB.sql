@@ -19,13 +19,13 @@ BEGIN
 		 SET @v_while_count +=1;
 		 SELECT   @p_dbname=name, @p_crdate=create_date  FROM @tb_list_databases WHERE Id = @v_while_count;
 
-		 IF NOT EXISTS  (select * from msdb..sysjobs where name='citizen_mnt_Backup_' + @p_dbname)
+		 IF NOT EXISTS  (select * from msdb..sysjobs where name='demo_mnt_Backup_' + @p_dbname)
 		 BEGIN
 
 			  SET @sqlcmdexecute = '		print '''+@p_dbname+'''
 					
 											DECLARE @jobId BINARY(16)
-											EXEC  msdb.dbo.sp_add_job @job_name=N''citizen_mnt_Backup_' + @p_dbname + ''', 
+											EXEC  msdb.dbo.sp_add_job @job_name=N''demo_mnt_Backup_' + @p_dbname + ''', 
 													@enabled=1, 
 													@notify_level_eventlog=0, 
 													@notify_level_email=2, 
@@ -46,7 +46,7 @@ BEGIN
 													@retry_attempts=1, 
 													@retry_interval=1, 
 													@os_run_priority=0, @subsystem=N''TSQL'', 
-													@command=N''BACKUP DATABASE [' + @p_dbname + '] TO [citizen_bkp_' + @p_dbname + '] WITH INIT, FORMAT, CHECKSUM
+													@command=N''BACKUP DATABASE [' + @p_dbname + '] TO [demo_bkp_' + @p_dbname + '] WITH INIT, FORMAT, CHECKSUM
 													declare @backupSetId as int  
 													select @backupSetId = position from msdb..backupset where database_name=N''''' + @p_dbname + ''''' and 
 													backup_set_id=(select max(backup_set_id) from msdb..backupset where database_name=N''''' + @p_dbname + ''''' ) 
@@ -54,7 +54,7 @@ BEGIN
 													begin
 													raiserror(N''''Verify failed. Backup information for database ''''''''' + @p_dbname + ''''''''' not found.'''', 16, 1) 
 													end
-													RESTORE VERIFYONLY FROM  [citizen_bkp_' + @p_dbname + '] WITH  FILE = @backupSetId, CHECKSUM'', 
+													RESTORE VERIFYONLY FROM  [demo_bkp_' + @p_dbname + '] WITH  FILE = @backupSetId, CHECKSUM'', 
 													@database_name=N''' + @p_dbname + ''', 
 													@flags=4
 
