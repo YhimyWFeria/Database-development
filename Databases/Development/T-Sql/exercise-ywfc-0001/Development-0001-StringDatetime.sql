@@ -1,10 +1,11 @@
---  Function convert String date.
-
+ USE [MetaPhoneTask]
+GO
+/****** Object:  UserDefinedFunction [dbo].[SetFormatDateOfFacebookPostDatetime]    Script Date: 2/9/2024 4:53:56 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE function [dbo].[SetFormatDateOfFacebookPostDatetime] (@p_time_String   varchar(100) , @p_date_include  datetime )
+ALTER function [dbo].[SetFormatDateOfFacebookPostDatetime] (@p_time_String   varchar(100) , @p_date_include  datetime )
 returns datetime
 as begin
 Declare @len_string int, @value1 varchar(50),@value2 varchar(50),@count_string int,@value3 varchar(10)
@@ -27,7 +28,7 @@ SET @count_string = @len_string- len(REPLACE(@p_time_String,space(1),''))
 								 when @value1 ='mie' then CAST(dateadd(DD, - (3 - DATEPART(WEEK, @p_date_include)+ 1),@p_date_include) AS DATE)
 								 when @value1 ='jue' then CAST(dateadd(DD, - (4 - DATEPART(WEEK, @p_date_include)+ 1),@p_date_include) AS DATE)
 								 when @value1 ='vie' then CAST(dateadd(DD, - (5 - DATEPART(WEEK, @p_date_include)+ 1),@p_date_include) AS DATE)
-								 when @value1 ='s√°b' then CAST(dateadd(DD, - (6 - DATEPART(WEEK, @p_date_include)+ 1),@p_date_include) AS DATE)
+								 when @value1 ='s·b' then CAST(dateadd(DD, - (6 - DATEPART(WEEK, @p_date_include)+ 1),@p_date_include) AS DATE)
 								 when @value1 ='dom' then CAST(dateadd(DD, - (7 - DATEPART(WEEK, @p_date_include)+ 1),@p_date_include) AS DATE)
 							   End
 				SET @date_sum = DATEADD(MINUTE, CAST( RIGHT(@value2,2) AS INT), DATEADD(HH,CAST(LEFT(@value2,2)AS INT),@date_sum))
@@ -114,6 +115,42 @@ SET @count_string = @len_string- len(REPLACE(@p_time_String,space(1),''))
 								end)
 				 end
 		end
+		
+		IF (@len_string in (13) and @count_string = 2)
+		begin
+				if (@p_time_String = 'Hace una hora')
+				begin
+					SET @date_sum  = DATEADD(HH, - 1,@p_date_include)
+				end
+		end
 
+		IF(@len_string in (10,11,12,13) and @count_string = 2)
+		begin			
+
+					 --SET DATEFORMAT DMY;
+					 SET @p_time_String = REPLACE(@p_time_String,'.','')
+					 IF (@p_time_String   LIKE '[0-9][0-9] [a-zA-Z][a-zA-Z][a-zA-Z] [0-9][0-9][0-9][0-9]')
+					 begin
+						select  @value1=value from dbo.fnSplit(@p_time_String,SPACE(1)) as t where id=1;
+						select  @value2=value from dbo.fnSplit(@p_time_String,SPACE(1)) as t where id=2;
+						select  @value3=value from dbo.fnSplit(@p_time_String,SPACE(1)) as t where id=3;
+
+						SET @date_sum =
+				               case
+									 when @value2 = 'ene' then DATEFROMPARTS ( cast(@value3 as int), 1, cast(@value1 as int) ) 
+									 when @value2 = 'feb' then DATEFROMPARTS ( cast(@value3 as int), 2, cast(@value1 as int) )
+									 when @value2 = 'mar' then DATEFROMPARTS ( cast(@value3 as int), 3, cast(@value1 as int) )
+									 when @value2 = 'abr' then DATEFROMPARTS ( cast(@value3 as int), 4, cast(@value1 as int) )
+									 when @value2 = 'may' then DATEFROMPARTS ( cast(@value3 as int), 5, cast(@value1 as int) )
+									 when @value2 = 'jun' then DATEFROMPARTS ( cast(@value3 as int), 6, cast(@value1 as int) )
+									 when @value2 = 'jul' then DATEFROMPARTS ( cast(@value3 as int), 7, cast(@value1 as int) )
+									 when @value2 = 'ago' then DATEFROMPARTS ( cast(@value3 as int), 8, cast(@value1 as int) )
+									 when @value2 = 'sep' then DATEFROMPARTS ( cast(@value3 as int), 9, cast(@value1 as int) )
+									 when @value2 = 'oct' then DATEFROMPARTS ( cast(@value3 as int), 11, cast(@value1 as int) )
+									 when @value2 = 'nov' then DATEFROMPARTS ( cast(@value3 as int), 12, cast(@value1 as int) )
+									 when @value2 = 'dic' then DATEFROMPARTS ( cast(@value3 as int), 12, cast(@value1 as int) )
+							   end
+					 end
+		end 
 		return @date_sum
 End

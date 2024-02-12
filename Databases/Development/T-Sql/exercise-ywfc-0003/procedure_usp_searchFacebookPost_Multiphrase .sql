@@ -62,7 +62,7 @@ BEGIN
 	UPDATE F  SET F.hashtagCount = ISNULL(T.hashtag_count,0) , F.hashtagValue =  T.hashtag_value 
 	FROM (
 	select FK_FilterId,count(1) hashtag_count  , STRING_AGG(h.value,',') hashtag_value
-	from @vt_splitFacebookPostBodyTextbytext h where charindex('#',value) >0
+	from @vt_splitFacebookPostBodyTextbytext h  where [value]  not like '%https%'   and charindex('#',value) >0
 	group by FK_FilterId  )  AS T INNER JOIN @vt_listFacebookpostbyFilterConditional f
 	ON F.Id = T.FK_FilterId
  
